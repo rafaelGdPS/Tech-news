@@ -4,8 +4,6 @@ from parsel import Selector
 
 
 # Requisito 1
-
-
 def fetch(url):
     time.sleep(1)
     try:
@@ -17,9 +15,9 @@ def fetch(url):
         return None
     except requests.exceptions.HTTPError:
         return None
+
+
 # Requisito 2
-
-
 def scrape_updates(html_content):
     selector = Selector(text=html_content)
     url_news = selector.css(".entry-title > a::attr(href)").getall()
@@ -27,12 +25,12 @@ def scrape_updates(html_content):
         return url_news
     return []
 
+
 # Requisito 3
-
-
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    selector = Selector(text=html_content)
+    next_page = selector.css("a.next.page-numbers::attr(href)").get()
+    return next_page
 
 
 # Requisito 4
