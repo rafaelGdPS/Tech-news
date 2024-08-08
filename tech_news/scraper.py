@@ -3,6 +3,8 @@ import time
 from parsel import Selector
 from bs4 import BeautifulSoup
 
+from tech_news.database import create_news
+
 
 # Requisito 1
 def fetch(url):
@@ -36,7 +38,7 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_news(html_content):
-    selector = Selector(text=html_content)
+    selector = Selector(html_content)
     soup = BeautifulSoup(html_content, "html.parser")
 
     url = selector.css("link[rel=canonical]::attr(href)").get()
@@ -60,5 +62,25 @@ def scrape_news(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    url = "https://blog.betrybe.com"
+    url_news = []
+    info_news = []
+
+    while len(url_news) < amount:
+        html_contetnt = fetch(url)
+        url_news.extend(scrape_updates(html_contetnt))
+        url = scrape_next_page_link(html_contetnt)
+
+        if not url:
+            break
+
+    first_news = url_news[:amount]
+
+    for news in first_news:
+        html_contetnt = fetch(news)
+        dict_news = scrape_news(html_contetnt)
+        info_news.append(dict_news)
+
+    create_news(info_news)
+
+    return info_news
